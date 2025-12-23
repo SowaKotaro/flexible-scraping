@@ -6,6 +6,7 @@ function ResultsViewer({ results = [] }) {
     const [itemsPerPage, setItemsPerPage] = useState(50)
     const [expandedItems, setExpandedItems] = useState(new Set())
     const [showOnlyExtracted, setShowOnlyExtracted] = useState(false)
+    const [copySuccess, setCopySuccess] = useState(false)
 
     // フィルタリングされた結果
     const filteredResults = useMemo(() => {
@@ -40,6 +41,18 @@ function ResultsViewer({ results = [] }) {
     const allExtractedData = useMemo(() => {
         return results.flatMap(r => r.extracted_data || [])
     }, [results])
+
+    // 抽出データをクリップボードにコピー
+    const copyAllExtractedData = async () => {
+        const textToCopy = allExtractedData.join('\n')
+        try {
+            await navigator.clipboard.writeText(textToCopy)
+            setCopySuccess(true)
+            setTimeout(() => setCopySuccess(false), 2000)
+        } catch (err) {
+            console.error('コピーに失敗しました:', err)
+        }
+    }
 
     // 展開・折りたたみ
     const toggleExpand = (index) => {
@@ -332,6 +345,12 @@ function ResultsViewer({ results = [] }) {
                         <span className="text-sm font-normal bg-purple-600 px-2 py-0.5 rounded-full">
                             {allExtractedData.length}件
                         </span>
+                        <button
+                            onClick={copyAllExtractedData}
+                            className="ml-auto btn btn-secondary text-sm flex items-center gap-1"
+                        >
+                            {copySuccess ? '✅ コピーしました' : '📋 すべてコピー'}
+                        </button>
                     </h3>
                     <div className="bg-slate-900 rounded-lg p-4 max-h-64 overflow-y-auto font-mono text-sm">
                         {allExtractedData.slice(0, 500).map((data, i) => (

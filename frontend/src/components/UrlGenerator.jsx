@@ -5,7 +5,7 @@ function UrlGenerator({ onUrlsGenerated }) {
     const [placeholderType, setPlaceholderType] = useState('range')
     const [placeholderName, setPlaceholderName] = useState('num')
     const [rangeStart, setRangeStart] = useState(1)
-    const [rangeEnd, setRangeEnd] = useState(10)
+    const [rangeEnd, setRangeEnd] = useState(1)
     const [rangeStep, setRangeStep] = useState(1)
     const [listValues, setListValues] = useState('')
     const [preview, setPreview] = useState(null)
