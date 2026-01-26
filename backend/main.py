@@ -10,6 +10,7 @@ from api.html_parser import router as html_parser_router
 from api.url_generator import router as url_generator_router
 from api.robots_checker import router as robots_checker_router
 from api.scraper import router as scraper_router
+from api.fetcher import router as fetcher_router
 
 app = FastAPI(
     title="Webスクレイピング支援ツール API",
@@ -29,6 +30,7 @@ app.add_middleware(
 # ルーター登録
 app.include_router(html_parser_router, prefix="/api", tags=["HTML解析"])
 app.include_router(url_generator_router, prefix="/api", tags=["URL生成"])
+app.include_router(fetcher_router, prefix="/api", tags=["HTML取得"])
 app.include_router(robots_checker_router, prefix="/api", tags=["robots.txt"])
 app.include_router(scraper_router, prefix="/api", tags=["スクレイピング"])
 
