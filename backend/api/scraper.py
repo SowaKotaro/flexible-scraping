@@ -20,6 +20,7 @@ class ScrapeConfig(BaseModel):
     """スクレイピング設定"""
     urls: List[str]
     selector: Optional[str] = None  # 抽出するCSSセレクタ
+    exclude_tags: Optional[List[str]] = None  # 除外するタグ（例: ["span", "script"]）
     sleep_interval: float = 5.0  # リクエスト間隔（秒）
     timeout: int = 30  # リクエストタイムアウト（秒）
     headers: Optional[dict] = None  # カスタムヘッダー
@@ -46,6 +47,7 @@ class ScrapeResponse(BaseModel):
 def scrape_single_url(
     url: str,
     selector: Optional[str] = None,
+    exclude_tags: Optional[List[str]] = None,
     timeout: int = 30,
     headers: Optional[dict] = None
 ) -> ScrapeResult:
@@ -75,7 +77,15 @@ def scrape_single_url(
         extracted_data = None
         if selector:
             elements = soup.select(selector)
-            extracted_data = [el.get_text(strip=True) for el in elements]
+            extracted_texts = []
+            for el in elements:
+                # 除外タグを削除してからテキスト取得
+                if exclude_tags:
+                    for tag in exclude_tags:
+                        for child in el.find_all(tag):
+                            child.decompose()
+                extracted_texts.append(el.get_text(strip=True))
+            extracted_data = extracted_texts
         
         # コンテンツ全体（先頭1000文字まで）
         content = response.text[:1000]
@@ -130,6 +140,7 @@ async def scrape_urls(config: ScrapeConfig):
             result = scrape_single_url(
                 url=url,
                 selector=config.selector,
+                exclude_tags=config.exclude_tags,
                 timeout=config.timeout,
                 headers=config.headers
             )
@@ -184,6 +195,7 @@ async def scrape_urls_stream(config: ScrapeConfig):
                 result = scrape_single_url(
                     url=url,
                     selector=config.selector,
+                    exclude_tags=config.exclude_tags,
                     timeout=config.timeout,
                     headers=config.headers
                 )

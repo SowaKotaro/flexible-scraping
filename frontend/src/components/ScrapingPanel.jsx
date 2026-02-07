@@ -3,6 +3,7 @@ import { useState, useRef, useEffect } from 'react'
 function ScrapingPanel({ urls = [], selector = '', onScrapingComplete, onViewResults }) {
     const [scrapeUrls, setScrapeUrls] = useState(urls)
     const [cssSelector, setCssSelector] = useState(selector || '')
+    const [excludeTags, setExcludeTags] = useState('')
     const [sleepInterval, setSleepInterval] = useState(5)
     const [isRunning, setIsRunning] = useState(false)
     const [logs, setLogs] = useState([])
@@ -88,6 +89,7 @@ function ScrapingPanel({ urls = [], selector = '', onScrapingComplete, onViewRes
                 body: JSON.stringify({
                     urls: scrapeUrls,
                     selector: cssSelector || null,
+                    exclude_tags: excludeTags ? excludeTags.split(',').map(t => t.trim()).filter(t => t) : null,
                     sleep_interval: sleepInterval
                 }),
                 signal: abortControllerRef.current.signal
@@ -152,6 +154,7 @@ function ScrapingPanel({ urls = [], selector = '', onScrapingComplete, onViewRes
         setResults([])
         setLogs([])
         setRobotsResults(null)
+        setExcludeTags('')
     }
 
     return (
@@ -200,7 +203,7 @@ function ScrapingPanel({ urls = [], selector = '', onScrapingComplete, onViewRes
                     <span>⚙️</span> スクレイピング設定
                 </h2>
 
-                <div className="grid grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div>
                         <label className="text-sm text-slate-400 mb-2 block">CSSセレクタ（オプション）</label>
                         <input
@@ -212,6 +215,19 @@ function ScrapingPanel({ urls = [], selector = '', onScrapingComplete, onViewRes
                         />
                         <p className="text-xs text-slate-500 mt-1">
                             指定すると、この要素のテキストのみ抽出します
+                        </p>
+                    </div>
+                    <div>
+                        <label className="text-sm text-slate-400 mb-2 block">除外タグ（オプション）</label>
+                        <input
+                            type="text"
+                            value={excludeTags}
+                            onChange={(e) => setExcludeTags(e.target.value)}
+                            placeholder="span, script, style"
+                            className="input font-mono"
+                        />
+                        <p className="text-xs text-slate-500 mt-1">
+                            カンマ区切りで除外するタグを指定
                         </p>
                     </div>
                     <div>
