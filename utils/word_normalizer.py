@@ -12,9 +12,9 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 # しきい値設定（調整可能）
-LEVENSHTEIN_THRESHOLD = 0.7  # 正規化スコア（0-1）
-JARO_WINKLER_THRESHOLD = 0.7  # スコア（0-1）
-NGRAM_COSINE_THRESHOLD = 0.7  # コサイン類似度（0-1）
+LEVENSHTEIN_THRESHOLD = 0.9  # 正規化スコア（0-1）
+JARO_WINKLER_THRESHOLD = 0.9  # スコア（0-1）
+NGRAM_COSINE_THRESHOLD = 0.9  # コサイン類似度（0-1）
 NGRAM_SIZE = 2  # Bi-gram
 
 
